@@ -146,7 +146,13 @@ class PostDeleteView(
         return redirect(success_url)
 
     def get_queryset(self):
-        return Post.objects.all()
+        return Post.objects.select_related(
+            'category', 'author', 'location'
+        ).filter(
+            is_published=True,
+            category__is_published=True,
+            pub_date__lte=timezone.now()
+        ).annotate(comment_count=models.Count('comment')).order_by('-pub_date')
 
 
 def post_detail(request, post_id):
