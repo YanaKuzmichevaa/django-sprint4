@@ -139,6 +139,11 @@ class PostDeleteView(
         post = self.get_object()
         return post.author == self.request.user
 
+    def delete(self, request, *args, **kwargs):
+        post = self.get_object()
+        post.delete()
+        return redirect(self.success_url)
+
 
 def post_detail(request, post_id):
     template_name = 'blog/detail.html'
