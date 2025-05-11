@@ -109,7 +109,9 @@ class PostCreateView(LoginRequiredMixin, PostMixin, CreateView):
         )
 
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, PostMixin, UpdateView):
+class PostUpdateView(
+    LoginRequiredMixin, UserPassesTestMixin, PostMixin, UpdateView
+):
     pk_url_kwarg = 'post_id'
 
     def test_func(self):
@@ -126,7 +128,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, PostMixin, UpdateV
         return redirect('blog:post_detail', post_id=self.kwargs['post_id'])
 
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, PostMixin, DeleteView):
+class PostDeleteView(
+    LoginRequiredMixin, UserPassesTestMixin, PostMixin, DeleteView
+):
     pk_url_kwarg = 'post_id'
 
     def test_func(self):
@@ -144,7 +148,9 @@ def post_detail(request, post_id):
     template_name = 'blog/detail.html'
 
     if request.user.is_authenticated:
-        queryset = Post.objects.select_related('author', 'category', 'location')
+        queryset = Post.objects.select_related(
+            'author', 'category', 'location'
+        )
     else:
         queryset = get_base_queryset()
 
@@ -218,9 +224,13 @@ class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
         return super().form_valid(form)
 
 
-class CommentUpdateView(LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, UpdateView):
+class CommentUpdateView(
+    LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, UpdateView
+):
     pk_url_kwarg = 'comment_id'
 
 
-class CommentDeleteView(LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, DeleteView):
+class CommentDeleteView(
+    LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, DeleteView
+):
     pk_url_kwarg = 'comment_id'
