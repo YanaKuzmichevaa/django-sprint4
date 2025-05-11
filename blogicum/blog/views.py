@@ -44,7 +44,8 @@ class ProfileDetailView(DetailView):
                 comment_count=models.Count('comment')
             ).order_by('-pub_date')
         else:
-            post_list = get_base_queryset().filter(author=user)
+            post_list = get_base_queryset().filter(
+                author=user, is_published=True)
 
         paginator = Paginator(post_list, self.paginate_by)
         page_number = self.request.GET.get('page')
