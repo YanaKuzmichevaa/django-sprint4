@@ -144,6 +144,9 @@ class PostDeleteView(
         post.delete()
         return redirect(self.success_url)
 
+    def get_queryset(self):
+        return Post.objects.all()
+
 
 def post_detail(request, post_id):
     template_name = 'blog/detail.html'
