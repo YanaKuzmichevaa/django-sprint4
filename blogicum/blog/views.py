@@ -133,16 +133,17 @@ class PostDeleteView(
     LoginRequiredMixin, UserPassesTestMixin, PostMixin, DeleteView
 ):
     pk_url_kwarg = 'post_id'
+    success_url = reverse_lazy('blog:index')
 
     def test_func(self):
         post = self.get_object()
         return post.author == self.request.user
 
-    def get_success_url(self):
-        return reverse_lazy(
-            'blog:profile',
-            kwargs={'username': self.request.user.username}
-        )
+    #def get_success_url(self):
+        #return reverse_lazy(
+            #'blog:profile',
+            #kwargs={'username': self.request.user.username}
+        #)
 
 
 def post_detail(request, post_id):
