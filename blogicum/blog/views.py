@@ -140,9 +140,10 @@ class PostDeleteView(
         return post.author == self.request.user
 
     def delete(self, request, *args, **kwargs):
-        post = self.get_object()
-        post.delete()
-        return redirect(self.success_url)
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        return redirect(success_url)
 
     def get_queryset(self):
         return Post.objects.all()
