@@ -206,7 +206,6 @@ class OnlyAuthorMixin(UserPassesTestMixin):
 
 class CommentMixin:
     model = Comment
-    form_class = CommentForm
     template_name = 'blog/comment.html'
 
     def get_success_url(self):
@@ -217,6 +216,8 @@ class CommentMixin:
 
 
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
+    form_class = CommentForm
+
     def form_valid(self, form):
         post = get_object_or_404(Post, pk=self.kwargs['post_id'])
         form.instance.author = self.request.user
@@ -227,6 +228,7 @@ class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
 class CommentUpdateView(
     LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, UpdateView
 ):
+    form_class = CommentForm
     pk_url_kwarg = 'comment_id'
 
 
