@@ -139,12 +139,6 @@ class PostDeleteView(
         post = self.get_object()
         return post.author == self.request.user
 
-    #def get_success_url(self):
-        #return reverse_lazy(
-            #'blog:profile',
-            #kwargs={'username': self.request.user.username}
-        #)
-
 
 def post_detail(request, post_id):
     template_name = 'blog/detail.html'
