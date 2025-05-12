@@ -130,14 +130,24 @@ class PostUpdateView(
 
 
 class PostDeleteView(
-    LoginRequiredMixin, UserPassesTestMixin, PostMixin, DeleteView
+    LoginRequiredMixin, UserPassesTestMixin, DeleteView
 ):
+    model = Post
     pk_url_kwarg = 'post_id'
+    template_name = 'blog/create.html'
     success_url = reverse_lazy('blog:index')
 
     def test_func(self):
         post = self.get_object()
         return post.author == self.request.user
+
+    def handle_no_permission(self):
+        return redirect('blog:post_detail', post_id=self.kwargs['post_id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = PostForm(instance=self.object)
+        return context
 
 
 def post_detail(request, post_id):
