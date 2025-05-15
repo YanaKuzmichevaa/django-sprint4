@@ -1,7 +1,8 @@
 from django import forms
-from .models import Post, Comment
-from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserChangeForm
+
+from .models import Post, Comment
 
 
 class PostForm(forms.ModelForm):

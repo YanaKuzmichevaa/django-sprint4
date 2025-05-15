@@ -3,8 +3,7 @@ from django.db import models
 
 
 User = get_user_model()
-MAX_LENGTH_STR = 256
-NUM_OF_POSTS = 5
+MAX_LENGTH_OF_TITLES = 256
 LIMIT_STR_SYMB = 30
 
 
@@ -24,7 +23,7 @@ class PublishedMode(models.Model):
 
 class Location(PublishedMode):
     name = models.CharField(
-        max_length=MAX_LENGTH_STR, verbose_name='Название места'
+        max_length=MAX_LENGTH_OF_TITLES, verbose_name='Название места'
     )
 
     class Meta:
@@ -37,7 +36,7 @@ class Location(PublishedMode):
 
 class Category(PublishedMode):
     title = models.CharField(
-        max_length=MAX_LENGTH_STR, verbose_name='Заголовок'
+        max_length=MAX_LENGTH_OF_TITLES, verbose_name='Заголовок'
     )
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
@@ -58,7 +57,7 @@ class Category(PublishedMode):
 
 class Post(PublishedMode):
     title = models.CharField(
-        max_length=MAX_LENGTH_STR, verbose_name='Заголовок'
+        max_length=MAX_LENGTH_OF_TITLES, verbose_name='Заголовок'
     )
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
@@ -100,15 +99,17 @@ class Comment(PublishedMode):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        verbose_name='Публикация'
+        verbose_name='Публикация',
+        related_name='comments'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор'
+        verbose_name='Автор',
+        related_name='author'
     )
     text = models.TextField(
-        max_length=MAX_LENGTH_STR, verbose_name='Текст комментария')
+        max_length=MAX_LENGTH_OF_TITLES, verbose_name='Текст комментария')
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата создания')
 
@@ -116,3 +117,7 @@ class Comment(PublishedMode):
         ordering = ('created_at',)
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
+        default_related_name = 'comments'
+
+    def __str__(self):
+        return self.text[:LIMIT_STR_SYMB]
