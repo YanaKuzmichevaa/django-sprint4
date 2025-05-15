@@ -6,7 +6,8 @@ from blogicum.settings import NUM_OF_POSTS
 from .models import Post
 
 
-def get_optimized_queryset(manager=Post.objects, filters=True, annotations=False):
+def get_optimized_queryset(
+        manager=Post.objects, filters=True, annotations=False):
     queryset = manager.select_related('category', 'author', 'location')
 
     if filters:
