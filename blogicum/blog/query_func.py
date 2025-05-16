@@ -1,8 +1,6 @@
 from django.db import models
-from django.core.paginator import Paginator
 from django.utils import timezone
 
-from blogicum.settings import NUM_OF_POSTS
 from .models import Post
 
 
@@ -22,10 +20,3 @@ def get_optimized_queryset(
         ).order_by('-pub_date')
 
     return queryset
-
-
-def get_paginator(request, queryset, per_page=NUM_OF_POSTS):
-    paginator = Paginator(queryset, per_page)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return {'page_obj': page_obj}
