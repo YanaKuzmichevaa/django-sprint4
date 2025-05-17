@@ -10,7 +10,7 @@ from django.views.generic import (
 
 from .forms import PostForm, CommentForm, UserUpdateForm
 from .mixins import OnlyAuthorMixin, PostMixin, CommentMixin, UpdDelCommMixin
-from .models import Post, Category, Comment
+from .models import Post, Category
 from .query_func import get_optimized_queryset
 from .paginate import get_paginator
 
@@ -163,7 +163,7 @@ class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
 
 
 class CommentUpdateView(
-    LoginRequiredMixin, OnlyAuthorMixin, 
+    LoginRequiredMixin, OnlyAuthorMixin,
     CommentMixin, UpdDelCommMixin, UpdateView
 ):
     form_class = CommentForm
