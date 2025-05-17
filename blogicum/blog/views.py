@@ -9,7 +9,7 @@ from django.views.generic import (
 )
 
 from .forms import PostForm, CommentForm, UserUpdateForm
-from .mixins import OnlyAuthorMixin
+from .mixins import OnlyAuthorMixin, PostMixin, CommentMixin, UpdDelCommMixin
 from .models import Post, Category, Comment
 from .query_func import get_optimized_queryset
 from .paginate import get_paginator
@@ -31,9 +31,10 @@ class ProfileListView(ListView):
 
     def get_queryset(self):
         queryset = get_optimized_queryset(
+            manager=self.profile.posts,
             filters=(self.request.user != self.profile),
             annotations=True
-        ).filter(author=self.profile)
+        )
 
         return queryset
 
@@ -65,12 +66,6 @@ def index(request):
     post_list = get_optimized_queryset(filters=True, annotations=True)
     context = get_paginator(request, post_list)
     return render(request, template_name, context)
-
-
-class PostMixin:
-    model = Post
-    form_class = PostForm
-    template_name = 'blog/create.html'
 
 
 class PostCreateView(LoginRequiredMixin, PostMixin, CreateView):
@@ -119,8 +114,7 @@ def post_detail(request, post_id):
 
     post = get_object_or_404(queryset, pk=post_id)
 
-    is_author = request.user == post.author
-    if not is_author:
+    if not request.user == post.author:
         queryset_with_filter = get_optimized_queryset(
             filters=True,
             annotations=False
@@ -158,17 +152,6 @@ def category_posts(request, category_slug):
     return render(request, template_name, context)
 
 
-class CommentMixin:
-    model = Comment
-    template_name = 'blog/comment.html'
-
-    def get_success_url(self):
-        return reverse(
-            'blog:post_detail',
-            kwargs={'post_id': self.kwargs['post_id']}
-        )
-
-
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
     form_class = CommentForm
 
@@ -180,27 +163,15 @@ class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
 
 
 class CommentUpdateView(
-    LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, UpdateView
+    LoginRequiredMixin, OnlyAuthorMixin, 
+    CommentMixin, UpdDelCommMixin, UpdateView
 ):
     form_class = CommentForm
     pk_url_kwarg = 'comment_id'
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            Comment,
-            pk=self.kwargs['post_id'],
-            post_id=self.kwargs['post_id']
-        )
-
 
 class CommentDeleteView(
-    LoginRequiredMixin, OnlyAuthorMixin, CommentMixin, DeleteView
+    LoginRequiredMixin, OnlyAuthorMixin,
+    CommentMixin, UpdDelCommMixin, DeleteView
 ):
     pk_url_kwarg = 'comment_id'
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            Comment,
-            pk=self.kwargs['post_id'],
-            post__id=self.kwargs['post_id']
-        )
