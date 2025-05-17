@@ -114,7 +114,7 @@ def post_detail(request, post_id):
 
     post = get_object_or_404(queryset, pk=post_id)
 
-    if not request.user == post.author:
+    if request.user != post.author:
         queryset_with_filter = get_optimized_queryset(
             filters=True,
             annotations=False
